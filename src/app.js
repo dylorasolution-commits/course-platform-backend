@@ -8,6 +8,11 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/enroll", require("./routes/enrollment.routes"));
+app.use("/api/courses", require("./routes/course.routes"));
+app.use("/api/assessment",require("./routes/assessment.routes"));
+app.use("/api/certificate",require("./routes/certificate.routes"));
+app.use("/api/progress",require("./routes/progress.routes"));
 
 app.use(errorMiddleware);
 
