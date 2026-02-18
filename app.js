@@ -1,9 +1,15 @@
 const express = require("express");
+const mongoose = require("mongoose");
+
+const courseRoutes = require("./routes/courseRoutes");
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+
 const app = express();
 
 app.use(express.json());
 
-app.use("/api/enroll", require("./routes/enrollmentRoutes"));
-app.use("/api/courses", require("./routes/courseRoutes"));
+// Routes
+app.use("/api/courses", courseRoutes);
+app.use("/api/enroll", enrollmentRoutes);
 
 module.exports = app;

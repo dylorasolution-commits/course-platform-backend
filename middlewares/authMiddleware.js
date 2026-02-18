@@ -1,23 +1,10 @@
-const jwt = require("jsonwebtoken");
-
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  // Dummy user for testing
+  req.user = {
+    id: "65f1a1111111111111111111"  // Put any valid Mongo ObjectId
+  };
 
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = {
-      userId: decoded.id   // 👈 THIS IS IMPORTANT
-    };
-
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
-  }
+  next();
 };
 
 module.exports = authMiddleware;

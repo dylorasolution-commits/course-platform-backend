@@ -1,30 +1,39 @@
+// controllers/enrollmentController.js
 const Course = require("../models/Course");
+const Enrollment = require("../models/Enrollment");
 
-exports.createCourse = async (req, res) => {
+exports.enrollFreeCourse = async (req, res) => {
   try {
-    const { title, description, price } = req.body;
+    const { courseId } = req.params;
 
-    if (!title || !price) {
-      return res.status(400).json({ message: "Title and price required" });
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
     }
 
-    const course = await Course.create({
-      title,
-      description,
-      price,
+    if (!course.isFree) {
+      return res.status(400).json({ message: "This is a paid course" });
+    }
+
+    const alreadyEnrolled = await Enrollment.findOne({
+      userId: req.user.id,
+      courseId: courseId
     });
 
-    res.status(201).json(course);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+    if (alreadyEnrolled) {
+      return res.status(400).json({ message: "Already enrolled" });
+    }
 
-exports.getAllCourses = async (req, res) => {
-  try {
-    const courses = await Course.find();
-    res.json(courses);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    const enrollment = new Enrollment({
+      userId: req.user.id,
+      courseId: courseId
+    });
+
+    await enrollment.save();
+
+    res.json({ message: "Successfully enrolled" });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
